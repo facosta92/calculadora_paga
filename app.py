@@ -2,41 +2,27 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Datos de salario base
+# Datos de salario base según el convenio
 SALARIOS_BASE = {
-    "mensajero": 1025,
-    "ciclomensajero": 1025,
-    "conductor": 1100,
-    "andarin": 1000
+    "mensajero": 1097.98,
+    "ciclomensajero": 1097.98,
+    "conductor": 1097.98,
+    "andarin": 1097.98
 }
 
-# Factores por unidad de trabajo según población
-FACTORES_UNIDAD = {
-    "mas_1500000": {"urgente": 1.78, "standard": 1.35, "codigo_postal": 0.80, "kilometros": 0.28, "exceso_pm": 0.99, "tiempo_espera": 0.11, "coef_k": 0.91},
-    "501001_1500000": {"urgente": 1.35, "standard": 1.10, "codigo_postal": 0.80, "kilometros": 0.28, "exceso_pm": 0.99, "tiempo_espera": 0.11, "coef_k": 0.91},
-    "301001_500000": {"urgente": 1.22, "standard": 1.10, "codigo_postal": 0.80, "kilometros": 0.28, "exceso_pm": 0.99, "tiempo_espera": 0.11, "coef_k": 0.91},
-    "50001_300000": {"urgente": 1.10, "standard": 1.10, "codigo_postal": 0.80, "kilometros": 0.28, "exceso_pm": 0.99, "tiempo_espera": 0.11, "coef_k": 0.91},
-    "menos_150000": {"urgente": 1.04, "standard": 1.04, "codigo_postal": 0.80, "kilometros": 0.28, "exceso_pm": 0.99, "tiempo_espera": 0.11, "coef_k": 0.91}
+# Valores de retribución por unidad de obra (RUO) según la población
+RUO = {
+    "mas_1500000": {"urgente": 1.78, "standard": 1.35},
+    "500001_1500000": {"urgente": 1.35, "standard": 1.10},
+    "300001_500000": {"urgente": 1.22, "standard": 1.10},
+    "150001_300000": {"urgente": 1.10, "standard": 1.10},
+    "menos_150000": {"urgente": 1.04, "standard": 1.04}
 }
 
-def calcular_salario(categoria, poblacion, unidades):
-    """ Cálculo del salario basado en la población y las unidades de trabajo """
-    
-    if categoria not in SALARIOS_BASE:
-        return {"error": "Categoría inválida"}, 400
-    
-    if poblacion not in FACTORES_UNIDAD:
-        return {"error": "Rango de población inválido"}, 400
-
-    salario_base = SALARIOS_BASE[categoria]
-    factores = FACTORES_UNIDAD[poblacion]
-
-    # Cálculo de salario basado en unidades de trabajo
-    salario = salario_base
-    for key, value in unidades.items():
-        salario += unidades[key] * factores.get(key, 0)
-
-    return {"paga_calculada": round(salario, 2)}
+# Variables para el cálculo de gastos de locomoción
+COEFICIENTE_K = 0.91
+CONSTANTE_C = 0.78
+PRECIO_KM = 0.19
 
 @app.route('/')
 def index():
@@ -44,29 +30,58 @@ def index():
 
 @app.route('/calcular', methods=['POST'])
 def calcular_paga():
-    """ Ruta para calcular la paga """
     try:
         data = request.get_json()
-
         categoria = data.get("categoria")
         poblacion = data.get("poblacion")
-        unidades = {
-            "urgente": float(data.get("urgente", 0)),
-            "standard": float(data.get("standard", 0)),
-            "codigo_postal": float(data.get("codigo_postal", 0)),
-            "kilometros": float(data.get("kilometros", 0)),
-            "exceso_pm": float(data.get("exceso_pm", 0)),
-            "tiempo_espera": float(data.get("tiempo_espera", 0)),
-            "coef_k": float(data.get("coef_k", 0))
-        }
+        direcciones_urgentes = float(data.get("direccionesUrgentes", 0))
+        direcciones_standard = float(data.get("direccionesStandard", 0))
+        km_recorridos = float(data.get("kmRecorridos", 0))
+        horas_extras = float(data.get("horasExtras", 0))
+        antiguedad = float(data.get("antiguedad", 0))
+        festivos_trabajados = float(data.get("festivosTrabajados", 0))
+        dias_vacaciones = float(data.get("diasVacaciones", 0))
 
-        resultado = calcular_salario(categoria, poblacion, unidades)
-        return jsonify(resultado)
+        if categoria not in SALARIOS_BASE or poblacion not in RUO:
+            return jsonify({"error": "Datos inválidos"}), 400
 
-    except ValueError:
-        return jsonify({"error": "Datos inválidos, ingrese solo números"}), 400
+        salario_base = SALARIOS_BASE[categoria]
+        valor_urgente = RUO[poblacion]["urgente"]
+        valor_standard = RUO[poblacion]["standard"]
+        
+        # Cálculo del salario por unidad de obra
+        salario = salario_base + (direcciones_urgentes * valor_urgente) + (direcciones_standard * valor_standard)
+        
+        # Cálculo del plus de peligrosidad
+        plus_peligrosidad = salario * 0.06 if categoria == "mensajero" else direcciones_urgentes * 0.07
+        salario += plus_peligrosidad
+
+        # Cálculo de gastos de locomoción
+        ruo_mensual = salario_base / 14
+        gasto_locomocion = ((ruo_mensual * COEFICIENTE_K) / CONSTANTE_C) * km_recorridos * PRECIO_KM
+        salario += gasto_locomocion
+
+        # Cálculo de incentivos
+        if categoria == "mensajero" and direcciones_urgentes + direcciones_standard > 506:
+            salario += (direcciones_urgentes + direcciones_standard - 506) * 0.45
+        if categoria == "ciclomensajero" and direcciones_urgentes + direcciones_standard > 394:
+            salario += (direcciones_urgentes + direcciones_standard - 394) * 0.50
+
+        # Cálculo de horas extras
+        valor_hora_extra = (salario_base / 160) * 1.75
+        salario += horas_extras * valor_hora_extra
+
+        # Cálculo de antigüedad
+        salario += antiguedad * 30
+        salario += festivos_trabajados * 30
+
+        # Descuento por vacaciones
+        salario -= (salario_base / 30) * dias_vacaciones
+
+        return jsonify({"paga_calculada": round(salario, 2)})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)

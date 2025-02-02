@@ -13,7 +13,7 @@
             text-align: center;
         }
         .container {
-            max-width: 400px;
+            max-width: 500px;
             background: white;
             padding: 20px;
             border-radius: 8px;
@@ -47,13 +47,13 @@
             let data = {
                 categoria: document.getElementById("categoria").value,
                 poblacion: document.getElementById("poblacion").value,
-                urgente: document.getElementById("urgente").value || 0,
-                standard: document.getElementById("standard").value || 0,
-                codigo_postal: document.getElementById("codigo_postal").value || 0,
-                kilometros: document.getElementById("kilometros").value || 0,
-                exceso_pm: document.getElementById("exceso_pm").value || 0,
-                tiempo_espera: document.getElementById("tiempo_espera").value || 0,
-                coef_k: document.getElementById("coef_k").value || 0
+                direccionesUrgentes: document.getElementById("direccionesUrgentes").value || 0,
+                direccionesStandard: document.getElementById("direccionesStandard").value || 0,
+                kmRecorridos: document.getElementById("kmRecorridos").value || 0,
+                horasExtras: document.getElementById("horasExtras").value || 0,
+                antiguedad: document.getElementById("antiguedad").value || 0,
+                festivosTrabajados: document.getElementById("festivosTrabajados").value || 0,
+                diasVacaciones: document.getElementById("diasVacaciones").value || 0
             };
 
             let response = await fetch('/calcular', {
@@ -68,7 +68,6 @@
     </script>
 </head>
 <body>
-
     <div class="container">
         <h2>Calculadora de Paga</h2>
 
@@ -83,38 +82,35 @@
         <label for="poblacion">Tamaño de Población:</label>
         <select id="poblacion">
             <option value="mas_1500000">Más de 1.500.000 habitantes</option>
-            <option value="501001_1500000">De 501.001 a 1.500.000 habitantes</option>
-            <option value="301001_500000">De 301.001 a 500.000 habitantes</option>
-            <option value="50001_300000">De 50.001 a 300.000 habitantes</option>
+            <option value="500001_1500000">De 501.001 a 1.500.000 habitantes</option>
+            <option value="300001_500000">De 301.001 a 500.000 habitantes</option>
+            <option value="150001_300000">De 150.001 a 300.000 habitantes</option>
             <option value="menos_150000">Menos de 150.000 habitantes</option>
         </select><br>
 
-        <h3>Unidades de Trabajo</h3>
+        <label for="direccionesUrgentes">Direcciones Urgentes:</label>
+        <input type="number" id="direccionesUrgentes"><br>
 
-        <label for="urgente">Dirección Urgente:</label>
-        <input type="number" id="urgente" placeholder="Cantidad"><br>
+        <label for="direccionesStandard">Direcciones Standard:</label>
+        <input type="number" id="direccionesStandard"><br>
 
-        <label for="standard">Dirección Standard:</label>
-        <input type="number" id="standard" placeholder="Cantidad"><br>
+        <label for="kmRecorridos">Kilómetros Recorridos:</label>
+        <input type="number" id="kmRecorridos"><br>
 
-        <label for="codigo_postal">Dirección código postal en el último km:</label>
-        <input type="number" id="codigo_postal" placeholder="Cantidad"><br>
+        <label for="horasExtras">Horas Extras:</label>
+        <input type="number" id="horasExtras"><br>
 
-        <label for="kilometros">Kilómetros:</label>
-        <input type="number" id="kilometros" placeholder="Cantidad"><br>
+        <label for="antiguedad">Antigüedad (años):</label>
+        <input type="number" id="antiguedad"><br>
 
-        <label for="exceso_pm">Exceso p.m.:</label>
-        <input type="number" id="exceso_pm" placeholder="Cantidad"><br>
+        <label for="festivosTrabajados">Festivos Trabajados:</label>
+        <input type="number" id="festivosTrabajados"><br>
 
-        <label for="tiempo_espera">Tiempo de Espera:</label>
-        <input type="number" id="tiempo_espera" placeholder="Cantidad"><br>
-
-        <label for="coef_k">Coeficiente k:</label>
-        <input type="number" id="coef_k" placeholder="Cantidad"><br>
+        <label for="diasVacaciones">Días de Vacaciones:</label>
+        <input type="number" id="diasVacaciones"><br>
 
         <button onclick="calcularPaga()">Calcular Paga</button>
         <h3 id="resultado">Paga calculada: -- €</h3>
     </div>
-
 </body>
 </html>
