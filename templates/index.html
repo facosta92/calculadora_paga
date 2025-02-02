@@ -1,0 +1,57 @@
+<<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Paga</title>
+    <script>
+        async function calcularPaga() {
+            let data = {
+                categoria: document.getElementById("categoria").value,
+                unidadesTrabajo: document.getElementById("unidadesTrabajo").value || 0,
+                horasExtras: document.getElementById("horasExtras").value || 0,
+                antiguedad: document.getElementById("antiguedad").value || 0,
+                festivosTrabajados: document.getElementById("festivosTrabajados").value || 0,
+                diasVacaciones: document.getElementById("diasVacaciones").value || 0
+            };
+
+            let response = await fetch('/calcular', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            let result = await response.json();
+            document.getElementById("resultado").innerText = "Paga calculada: " + result.paga_calculada + " €";
+        }
+    </script>
+</head>
+<body>
+    <h2>Calculadora de Paga</h2>
+    <label for="categoria">Categoría:</label>
+    <select id="categoria">
+        <option value="mensajero">Mensajero</option>
+        <option value="ciclomensajero">Ciclomensajero</option>
+        <option value="conductor">Conductor</option>
+        <option value="andarin">Andarín</option>
+    </select><br><br>
+
+    <label for="unidadesTrabajo">Unidades de Trabajo:</label>
+    <input type="number" id="unidadesTrabajo"><br><br>
+
+    <label for="horasExtras">Horas Extras:</label>
+    <input type="number" id="horasExtras"><br><br>
+
+    <label for="antiguedad">Antigüedad (trienios):</label>
+    <input type="number" id="antiguedad"><br><br>
+
+    <label for="festivosTrabajados">Festivos Trabajados:</label>
+    <input type="number" id="festivosTrabajados"><br><br>
+
+    <label for="diasVacaciones">Días de Vacaciones:</label>
+    <input type="number" id="diasVacaciones"><br><br>
+
+    <button onclick="calcularPaga()">Calcular Paga</button>
+    <h3 id="resultado">Paga calculada: 0.00 €</h3>
+</body>
+</html>
