@@ -47,8 +47,9 @@
             let data = {
                 categoria: document.getElementById("categoria").value,
                 poblacion: document.getElementById("poblacion").value,
-                direccionesUrgentes: document.getElementById("direccionesUrgentes").value || 0,
-                direccionesStandard: document.getElementById("direccionesStandard").value || 0,
+                direccionesPorHora: document.getElementById("direccionesPorHora").value || 0,
+                horasPorDia: document.getElementById("horasPorDia").value || 0,
+                diasTrabajados: document.getElementById("diasTrabajados").value || 0,
                 kmRecorridos: document.getElementById("kmRecorridos").value || 0,
                 horasExtras: document.getElementById("horasExtras").value || 0,
                 antiguedad: document.getElementById("antiguedad").value || 0,
@@ -68,53 +69,39 @@
     </script>
 </head>
 <body>
+
     <div class="container">
         <h2>Calculadora de Paga</h2>
 
-        <label for="categoria">Selecciona tu Categoría de Trabajo:</label>
+        <label for="categoria">Categoría de Trabajo:</label>
         <select id="categoria">
-            <option value="mensajero">Mensajero (entrega de paquetes)</option>
-            <option value="ciclomensajero">Ciclomensajero (entregas en bicicleta)</option>
-            <option value="conductor">Conductor (entregas en vehículo)</option>
-            <option value="andarin">Andarín (entregas a pie)</option>
+            <option value="mensajero">Mensajero</option>
+            <option value="ciclomensajero">Ciclomensajero</option>
+            <option value="conductor">Conductor</option>
+            <option value="andarin">Andarín</option>
         </select><br>
 
-        <label for="poblacion">Selecciona el Tamaño de la Ciudad donde Trabajas:</label>
+        <label for="poblacion">Tamaño de la Ciudad:</label>
         <select id="poblacion">
-            <option value="mas_1500000">Más de 1.500.000 habitantes (ciudad grande)</option>
-            <option value="500001_1500000">De 501.001 a 1.500.000 habitantes (ciudad mediana)</option>
+            <option value="mas_1500000">Más de 1.500.000 habitantes</option>
+            <option value="500001_1500000">De 501.001 a 1.500.000 habitantes</option>
             <option value="300001_500000">De 301.001 a 500.000 habitantes</option>
             <option value="150001_300000">De 150.001 a 300.000 habitantes</option>
-            <option value="menos_150000">Menos de 150.000 habitantes (ciudad pequeña)</option>
+            <option value="menos_150000">Menos de 150.000 habitantes</option>
         </select><br>
 
-        <h3>Detalles de las Entregas</h3>
+        <label for="direccionesPorHora">Direcciones por Hora:</label>
+        <input type="number" id="direccionesPorHora"><br>
 
-        <label for="direccionesUrgentes">Cantidad de Direcciones Urgentes Realizadas:</label>
-        <input type="number" id="direccionesUrgentes"><br>
+        <label for="horasPorDia">Horas Trabajadas por Día:</label>
+        <input type="number" id="horasPorDia"><br>
 
-        <label for="direccionesStandard">Cantidad de Direcciones Standard Realizadas:</label>
-        <input type="number" id="direccionesStandard"><br>
-
-        <label for="kmRecorridos">Total de Kilómetros Recorridos:</label>
-        <input type="number" id="kmRecorridos"><br>
-
-        <h3>Extras y Deducciones</h3>
-
-        <label for="horasExtras">Horas Extras Trabajadas:</label>
-        <input type="number" id="horasExtras"><br>
-
-        <label for="antiguedad">Antigüedad en la Empresa (años):</label>
-        <input type="number" id="antiguedad"><br>
-
-        <label for="festivosTrabajados">Días Festivos Trabajados:</label>
-        <input type="number" id="festivosTrabajados"><br>
-
-        <label for="diasVacaciones">Días de Vacaciones Tomados:</label>
-        <input type="number" id="diasVacaciones"><br>
+        <label for="diasTrabajados">Días Trabajados en el Mes:</label>
+        <input type="number" id="diasTrabajados"><br>
 
         <button onclick="calcularPaga()">Calcular Paga</button>
         <h3 id="resultado">Paga calculada: -- €</h3>
     </div>
+
 </body>
 </html>

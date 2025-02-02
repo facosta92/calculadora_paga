@@ -19,11 +19,6 @@ RUO = {
     "menos_150000": {"urgente": 1.04, "standard": 1.04}
 }
 
-# Variables para el cálculo de gastos de locomoción
-COEFICIENTE_K = 0.91
-CONSTANTE_C = 0.78
-PRECIO_KM = 0.19
-
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -34,8 +29,9 @@ def calcular_paga():
         data = request.get_json()
         categoria = data.get("categoria")
         poblacion = data.get("poblacion")
-        direcciones_urgentes = float(data.get("direccionesUrgentes", 0))
-        direcciones_standard = float(data.get("direccionesStandard", 0))
+        direcciones_por_hora = float(data.get("direccionesPorHora", 0))
+        horas_por_dia = float(data.get("horasPorDia", 0))
+        dias_trabajados = float(data.get("diasTrabajados", 0))
         km_recorridos = float(data.get("kmRecorridos", 0))
         horas_extras = float(data.get("horasExtras", 0))
         antiguedad = float(data.get("antiguedad", 0))
@@ -49,29 +45,15 @@ def calcular_paga():
         valor_urgente = RUO[poblacion]["urgente"]
         valor_standard = RUO[poblacion]["standard"]
         
-        # Cálculo del salario por unidad de obra
-        salario = salario_base + (direcciones_urgentes * valor_urgente) + (direcciones_standard * valor_standard)
-        
-        # Cálculo del plus de peligrosidad
-        plus_peligrosidad = salario * 0.06 if categoria == "mensajero" else direcciones_urgentes * 0.07
-        salario += plus_peligrosidad
-
-        # Cálculo de gastos de locomoción
-        ruo_mensual = salario_base / 14
-        gasto_locomocion = ((ruo_mensual * COEFICIENTE_K) / CONSTANTE_C) * km_recorridos * PRECIO_KM
-        salario += gasto_locomocion
-
-        # Cálculo de incentivos
-        if categoria == "mensajero" and direcciones_urgentes + direcciones_standard > 506:
-            salario += (direcciones_urgentes + direcciones_standard - 506) * 0.45
-        if categoria == "ciclomensajero" and direcciones_urgentes + direcciones_standard > 394:
-            salario += (direcciones_urgentes + direcciones_standard - 394) * 0.50
+        # Calcular total de direcciones al mes
+        total_direcciones_mes = direcciones_por_hora * horas_por_dia * dias_trabajados
+        salario = salario_base + (total_direcciones_mes * (valor_urgente + valor_standard) / 2)
 
         # Cálculo de horas extras
         valor_hora_extra = (salario_base / 160) * 1.75
         salario += horas_extras * valor_hora_extra
 
-        # Cálculo de antigüedad
+        # Cálculo de antigüedad y festivos
         salario += antiguedad * 30
         salario += festivos_trabajados * 30
 
