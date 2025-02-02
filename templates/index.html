@@ -71,42 +71,46 @@
     <div class="container">
         <h2>Calculadora de Paga</h2>
 
-        <label for="categoria">Categoría:</label>
+        <label for="categoria">Selecciona tu Categoría de Trabajo:</label>
         <select id="categoria">
-            <option value="mensajero">Mensajero</option>
-            <option value="ciclomensajero">Ciclomensajero</option>
-            <option value="conductor">Conductor</option>
-            <option value="andarin">Andarín</option>
+            <option value="mensajero">Mensajero (entrega de paquetes)</option>
+            <option value="ciclomensajero">Ciclomensajero (entregas en bicicleta)</option>
+            <option value="conductor">Conductor (entregas en vehículo)</option>
+            <option value="andarin">Andarín (entregas a pie)</option>
         </select><br>
 
-        <label for="poblacion">Tamaño de Población:</label>
+        <label for="poblacion">Selecciona el Tamaño de la Ciudad donde Trabajas:</label>
         <select id="poblacion">
-            <option value="mas_1500000">Más de 1.500.000 habitantes</option>
-            <option value="500001_1500000">De 501.001 a 1.500.000 habitantes</option>
+            <option value="mas_1500000">Más de 1.500.000 habitantes (ciudad grande)</option>
+            <option value="500001_1500000">De 501.001 a 1.500.000 habitantes (ciudad mediana)</option>
             <option value="300001_500000">De 301.001 a 500.000 habitantes</option>
             <option value="150001_300000">De 150.001 a 300.000 habitantes</option>
-            <option value="menos_150000">Menos de 150.000 habitantes</option>
+            <option value="menos_150000">Menos de 150.000 habitantes (ciudad pequeña)</option>
         </select><br>
 
-        <label for="direccionesUrgentes">Direcciones Urgentes:</label>
+        <h3>Detalles de las Entregas</h3>
+
+        <label for="direccionesUrgentes">Cantidad de Direcciones Urgentes Realizadas:</label>
         <input type="number" id="direccionesUrgentes"><br>
 
-        <label for="direccionesStandard">Direcciones Standard:</label>
+        <label for="direccionesStandard">Cantidad de Direcciones Standard Realizadas:</label>
         <input type="number" id="direccionesStandard"><br>
 
-        <label for="kmRecorridos">Kilómetros Recorridos:</label>
+        <label for="kmRecorridos">Total de Kilómetros Recorridos:</label>
         <input type="number" id="kmRecorridos"><br>
 
-        <label for="horasExtras">Horas Extras:</label>
+        <h3>Extras y Deducciones</h3>
+
+        <label for="horasExtras">Horas Extras Trabajadas:</label>
         <input type="number" id="horasExtras"><br>
 
-        <label for="antiguedad">Antigüedad (años):</label>
+        <label for="antiguedad">Antigüedad en la Empresa (años):</label>
         <input type="number" id="antiguedad"><br>
 
-        <label for="festivosTrabajados">Festivos Trabajados:</label>
+        <label for="festivosTrabajados">Días Festivos Trabajados:</label>
         <input type="number" id="festivosTrabajados"><br>
 
-        <label for="diasVacaciones">Días de Vacaciones:</label>
+        <label for="diasVacaciones">Días de Vacaciones Tomados:</label>
         <input type="number" id="diasVacaciones"><br>
 
         <button onclick="calcularPaga()">Calcular Paga</button>
